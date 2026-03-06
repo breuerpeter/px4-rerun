@@ -10,25 +10,29 @@ static void set_timestamp(rerun::RecordingStream& rec, int64_t timestamp_us)
     }
 }
 
-void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us,
-                      float x, float y, float z,
-                      float qw, float qx, float qy, float qz)
+void log_vehicle_position(rerun::RecordingStream& rec, int64_t timestamp_us,
+                          float x, float y, float z)
 {
     set_timestamp(rec, timestamp_us);
 
     auto pos = coords::ned_to_zup(x, y, z);
+
+    rec.log("px4/body", rerun::Transform3D::from_translation({pos[0], pos[1], pos[2]}));
+}
+
+void log_vehicle_attitude(rerun::RecordingStream& rec, int64_t timestamp_us,
+                          float qw, float qx, float qy, float qz)
+{
+    set_timestamp(rec, timestamp_us);
+
     auto q = coords::ned_quat_to_zup(qw, qx, qy, qz);
 
-    auto transform = rerun::Transform3D::from_translation_rotation(
-        {pos[0], pos[1], pos[2]},
+    rec.log("px4/body", rerun::Transform3D::from_rotation(
         rerun::datatypes::Quaternion::from_wxyz(q[0], q[1], q[2], q[3])
-    );
+    ));
 
-    auto axes = rerun::Arrows3D::from_vectors({{0.5f, 0, 0}, {0, 0.5f, 0}, {0, 0, 0.5f}})
-        .with_colors({rerun::Color(255, 0, 0), rerun::Color(0, 255, 0), rerun::Color(0, 0, 255)});
-
-    rec.log("world/vehicle/pose", transform);
-    rec.log("world/vehicle/pose/axes", axes);
+    rec.log("px4/body/frd", rerun::Arrows3D::from_vectors({{0.3f, 0, 0}, {0, -0.3f, 0}, {0, 0, -0.3f}})
+        .with_colors({rerun::Color(255, 0, 0), rerun::Color(0, 255, 0), rerun::Color(0, 0, 255)}));
 }
 
 void log_home_position(rerun::RecordingStream& rec, int64_t timestamp_us,

@@ -7,10 +7,13 @@
 
 namespace px4_rerun {
 
-/// Log vehicle pose (NED position + quaternion). Converts to z-up internally.
-void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us,
-                      float x, float y, float z,
-                      float qw, float qx, float qy, float qz);
+/// Log vehicle position (NED). Converts to z-up internally.
+void log_vehicle_position(rerun::RecordingStream& rec, int64_t timestamp_us,
+                          float x, float y, float z);
+
+/// Log vehicle attitude (NED quaternion). Converts to z-up internally.
+void log_vehicle_attitude(rerun::RecordingStream& rec, int64_t timestamp_us,
+                          float qw, float qx, float qy, float qz);
 
 /// Log home position (NED). Converts to z-up internally.
 void log_home_position(rerun::RecordingStream& rec, int64_t timestamp_us,
