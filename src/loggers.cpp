@@ -35,6 +35,17 @@ void log_vehicle_attitude(rerun::RecordingStream& rec, int64_t timestamp_us,
         .with_colors({rerun::Color(255, 0, 0), rerun::Color(0, 255, 0), rerun::Color(0, 0, 255)}));
 }
 
+static rerun::Color mag_color(uint8_t mag_idx)
+{
+    static const rerun::Color colors[] = {
+        rerun::Color(239, 85, 59),   // red-orange
+        rerun::Color(0, 204, 150),   // teal
+        rerun::Color(99, 110, 250),  // blue-violet
+        rerun::Color(254, 203, 82),  // gold
+    };
+    return colors[mag_idx % 4];
+}
+
 void log_home_position(rerun::RecordingStream& rec, int64_t timestamp_us,
                        float x, float y, float z)
 {
@@ -44,11 +55,11 @@ void log_home_position(rerun::RecordingStream& rec, int64_t timestamp_us,
 
     auto point = rerun::Points3D({{pos[0], pos[1], pos[2]}})
         .with_colors({rerun::Color(0, 255, 0)})
-        .with_radii({0.1f})
+        .with_radii({0.05f})
         .with_labels({"Home"})
         .with_show_labels(true);
 
-    rec.log("world/home", point);
+    rec.log("px4/world/home", point);
 }
 
 void log_mission_item(rerun::RecordingStream& rec, int64_t timestamp_us,
@@ -65,14 +76,26 @@ void log_mission_item(rerun::RecordingStream& rec, int64_t timestamp_us,
         .with_labels({label})
         .with_show_labels(true);
 
-    rec.log("world/mission/current", point);
+    rec.log("px4/world/mission_item", point);
 }
 
 void log_text(rerun::RecordingStream& rec, int64_t timestamp_us,
               const std::string& text, uint8_t severity)
 {
     set_timestamp(rec, timestamp_us);
-    rec.log("logs/console", rerun::TextLog(text).with_level(severity_to_rerun_level(severity)));
+
+    // Prefix module name: "[module] msg" → "[px4/module] msg"
+    std::string display = text;
+
+    if (display.size() > 1 && display[0] == '[') {
+        auto close = display.find(']', 1);
+
+        if (close != std::string::npos) {
+            display.insert(1, "px4/");
+        }
+    }
+
+    rec.log("logs/px4", rerun::TextLog(display).with_level(severity_to_rerun_level(severity)));
 }
 
 void log_scalar(rerun::RecordingStream& rec, const std::string& entity_path,
@@ -80,6 +103,27 @@ void log_scalar(rerun::RecordingStream& rec, const std::string& entity_path,
 {
     set_timestamp(rec, timestamp_us);
     rec.log(entity_path, rerun::Scalars(value));
+}
+
+void log_sensor_mag(rerun::RecordingStream& rec, int64_t timestamp_us,
+                    uint8_t mag_idx, float x, float y, float z)
+{
+    set_timestamp(rec, timestamp_us);
+    std::string path = "px4/body/sensor_mag/" + std::to_string(mag_idx);
+    rec.log(path, rerun::Arrows3D::from_vectors({{x, y, z}})
+        .with_colors({mag_color(mag_idx)})
+        .with_labels({"Mag"}));
+}
+
+void log_mag_cal_samples(rerun::RecordingStream& rec, int64_t timestamp_us,
+                         uint8_t mag_idx,
+                         const std::vector<std::array<float, 3>>& samples)
+{
+    set_timestamp(rec, timestamp_us);
+    std::string path = "px4/body/mag_worker_data/" + std::to_string(mag_idx);
+    rec.log(path, rerun::Points3D(samples)
+        .with_colors({mag_color(mag_idx)})
+        .with_radii({0.01f}));
 }
 
 const char* nav_cmd_label(uint16_t nav_cmd)

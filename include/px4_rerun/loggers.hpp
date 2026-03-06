@@ -1,7 +1,9 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include <rerun.hpp>
 
@@ -30,6 +32,15 @@ void log_text(rerun::RecordingStream& rec, int64_t timestamp_us,
 /// Log a scalar value at an arbitrary entity path.
 void log_scalar(rerun::RecordingStream& rec, const std::string& entity_path,
                 int64_t timestamp_us, double value);
+
+/// Log raw magnetometer reading as a 3D point (body-frame Gauss).
+void log_sensor_mag(rerun::RecordingStream& rec, int64_t timestamp_us,
+                    uint8_t mag_idx, float x, float y, float z);
+
+/// Log all accumulated mag calibration samples as a single Points3D batch.
+void log_mag_cal_samples(rerun::RecordingStream& rec, int64_t timestamp_us,
+                         uint8_t mag_idx,
+                         const std::vector<std::array<float, 3>>& samples);
 
 /// Convert NAV_CMD to human-readable label.
 const char* nav_cmd_label(uint16_t nav_cmd);
