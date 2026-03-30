@@ -25,7 +25,13 @@ px4_rerun::log_scalar(rec, "timeseries/topic/field", timestamp_us, value);
 px4_rerun::log_ulog(rec, "flight.ulg");
 ```
 
-## See it in action
+## rerun-loader-ulog
 
-- PX4 RerunLogger module (to be publicly released soon) — real-time SITL visualization
-- ULog dataloader for the Rerun viewer ([rerun-loader-ulog](https://github.com/breuerpeter/rerun-loader-ulog))
+An external data loader for the Rerun Viewer that opens `.ulg` files directly.
+
+```bash
+cmake -B build -DPX4_RERUN_LOADER=ON && cmake --build build -j$(nproc)
+rerun flight.ulg
+```
+
+The executable is auto-installed to `~/.local/bin/` where the Rerun Viewer discovers it.
