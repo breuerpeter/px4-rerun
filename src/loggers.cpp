@@ -44,6 +44,34 @@ void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
 
     trajectory_points.push_back(last_pos);
 }
+void log_setpoint_pose(rerun::RecordingStream& rec, int64_t timestamp_us,
+                       float x, float y, float z, float yaw)
+{
+    set_timestamp(rec, timestamp_us);
+
+    auto pos = coords::ned_to_zup(x, y, z);
+
+    // Yaw direction vector in z-up: NED yaw is CW from north (+x)
+    float fwd_x = std::cos(yaw);
+    float fwd_y = std::sin(yaw);
+    auto fwd = coords::ned_to_zup(fwd_x * 0.3f, fwd_y * 0.3f, 0);
+
+    rec.log("px4/world/setpoint", rerun::Points3D({{pos[0], pos[1], pos[2]}})
+        .with_labels({"Setpoint"})
+        .with_show_labels(true)
+        .with_colors({rerun::Color(255, 255, 255, 80)})
+        .with_radii({0.02f}));
+
+    rec.log("px4/world/setpoint_yaw", rerun::Arrows3D::from_vectors({{fwd[0], fwd[1], fwd[2]}})
+        .with_origins({{pos[0], pos[1], pos[2]}})
+        .with_colors({rerun::Color(255, 0, 0)}));
+
+    rec.log("px4/world/setpoint_yaw_label", rerun::Points3D({{pos[0] + fwd[0], pos[1] + fwd[1], pos[2] + fwd[2]}})
+        .with_labels({"Yaw setpoint"})
+        .with_show_labels(true)
+        .with_colors({rerun::Color(255, 255, 255, 80)})
+        .with_radii({0.0f}));
+}
 
 void flush_trajectory(rerun::RecordingStream& rec)
 {

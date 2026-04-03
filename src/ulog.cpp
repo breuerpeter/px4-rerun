@@ -114,6 +114,23 @@ void log_home(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataC
     }
 }
 
+void log_setpoint(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataContainer>& data)
+{
+    if (!has_sub(data, "vehicle_local_position_setpoint")) return;
+
+    auto sub = data->subscription("vehicle_local_position_setpoint");
+    for (const auto& s : *sub) {
+        try {
+            auto ts = static_cast<int64_t>(s["timestamp"].as<uint64_t>());
+            float x = s["x"].as<float>();
+            float y = s["y"].as<float>();
+            float z = s["z"].as<float>();
+            float yaw = s["yaw"].as<float>();
+            log_setpoint_pose(rec, ts, x, y, z, yaw);
+        } catch (...) {}
+    }
+}
+
 void log_mission(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataContainer>& data)
 {
     if (!has_sub(data, "navigator_mission_item")) return;
@@ -218,6 +235,7 @@ void log_ulog(rerun::RecordingStream& rec, const std::string& filepath, const UL
 
     if (options.log_3d) {
         log_pose(rec, data);
+        log_setpoint(rec, data);
         log_home(rec, data);
         log_mission(rec, data);
     }
