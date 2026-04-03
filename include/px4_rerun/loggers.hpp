@@ -18,6 +18,10 @@ void set_vehicle_attitude(float qw, float qx, float qy, float qz);
 /// Log cached position + attitude as a combined Transform3D. Also accumulates trajectory.
 void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us);
 
+/// Log body velocity arrow at current position (NED). Converts to z-up internally.
+void log_velocity(rerun::RecordingStream& rec, int64_t timestamp_us,
+                  float x, float y, float z, float vx, float vy, float vz);
+
 /// Log setpoint pose (NED position + yaw). Converts to z-up internally.
 void log_setpoint_pose(rerun::RecordingStream& rec, int64_t timestamp_us,
                        float x, float y, float z, float yaw);

@@ -1,6 +1,9 @@
 #include <px4_rerun/loggers.hpp>
 #include <px4_rerun/coordinates.hpp>
 
+#include <cmath>
+#include <cstdio>
+
 namespace px4_rerun {
 
 static void set_timestamp(rerun::RecordingStream& rec, int64_t timestamp_us)
@@ -40,10 +43,33 @@ void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
         .with_labels({"Vehicle"})
         .with_show_labels(true)
         .with_colors({rerun::Color(255, 255, 255)})
-        .with_radii({0.0f}));
+        .with_radii({0.02f}));
 
     trajectory_points.push_back(last_pos);
 }
+
+void log_velocity(rerun::RecordingStream& rec, int64_t timestamp_us,
+                  float x, float y, float z, float vx, float vy, float vz)
+{
+    set_timestamp(rec, timestamp_us);
+
+    auto pos = coords::ned_to_zup(x, y, z);
+    constexpr float scale = 0.03f; // 10 m/s → 0.3 (body axes length)
+    constexpr float min_len = 0.02f;
+    float speed = std::sqrt(vx * vx + vy * vy + vz * vz);
+    float len = std::max(speed * scale, min_len);
+    float s = speed > 0 ? len / speed : 0;
+    auto vel = coords::ned_to_zup(vx * s, vy * s, vz * s);
+    char label[16];
+    std::snprintf(label, sizeof(label), "%.1f m/s", speed);
+
+    rec.log("px4/world/velocity", rerun::Arrows3D::from_vectors({{vel[0], vel[1], vel[2]}})
+        .with_origins({{pos[0], pos[1], pos[2]}})
+        .with_colors({rerun::Color(0, 255, 255)})
+        .with_labels({label})
+        .with_show_labels(true));
+}
+
 void log_setpoint_pose(rerun::RecordingStream& rec, int64_t timestamp_us,
                        float x, float y, float z, float yaw)
 {
