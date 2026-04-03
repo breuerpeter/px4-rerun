@@ -41,22 +41,22 @@ void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
         .with_radii({0.0f}));
 }
 
-static std::vector<std::array<float, 3>> flight_path_points;
+static std::vector<std::array<float, 3>> trajectory_points;
 
-void log_flight_path(float x, float y, float z)
+void log_trajectory(float x, float y, float z)
 {
-    flight_path_points.push_back(coords::ned_to_zup(x, y, z));
+    trajectory_points.push_back(coords::ned_to_zup(x, y, z));
 }
 
-void flush_flight_path(rerun::RecordingStream& rec)
+void flush_trajectory(rerun::RecordingStream& rec)
 {
-    if (flight_path_points.empty()) return;
+    if (trajectory_points.empty()) return;
 
-    rec.log_static("px4/world/flight_path",
-        rerun::LineStrips3D(rerun::components::LineStrip3D(flight_path_points))
+    rec.log_static("px4/world/trajectory",
+        rerun::LineStrips3D(rerun::components::LineStrip3D(trajectory_points))
             .with_colors({rerun::Color(255, 255, 255)}));
 
-    flight_path_points.clear();
+    trajectory_points.clear();
 }
 
 static rerun::Color mag_color(uint8_t mag_idx)

@@ -18,11 +18,11 @@ void set_vehicle_attitude(float qw, float qx, float qy, float qz);
 /// Log cached position + attitude as a combined Transform3D.
 void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us);
 
-/// Accumulate a flight path point (NED). Call flush_flight_path to log the batch.
-void log_flight_path(float x, float y, float z);
+/// Accumulate a flight path point (NED). Call flush_trajectory to log the batch.
+void log_trajectory(float x, float y, float z);
 
 /// Log all accumulated flight path points as a single static Points3D batch.
-void flush_flight_path(rerun::RecordingStream& rec);
+void flush_trajectory(rerun::RecordingStream& rec);
 
 /// Log home position (NED). Converts to z-up internally.
 void log_home_position(rerun::RecordingStream& rec, int64_t timestamp_us,

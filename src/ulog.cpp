@@ -92,11 +92,11 @@ void log_pose(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataC
                 att_samples[j].q[0], att_samples[j].q[1],
                 att_samples[j].q[2], att_samples[j].q[3]);
             log_vehicle_pose(rec, static_cast<int64_t>(ts));
-            log_flight_path(x, y, z);
+            log_trajectory(x, y, z);
         } catch (...) {}
     }
 
-    flush_flight_path(rec);
+    flush_trajectory(rec);
 }
 
 void log_home(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataContainer>& data)
