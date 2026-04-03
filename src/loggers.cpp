@@ -23,6 +23,8 @@ void set_vehicle_attitude(float qw, float qx, float qy, float qz)
     last_quat = coords::ned_quat_to_zup(qw, qx, qy, qz);
 }
 
+static std::vector<std::array<float, 3>> trajectory_points;
+
 void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
 {
     set_timestamp(rec, timestamp_us);
@@ -39,13 +41,8 @@ void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
         .with_show_labels(true)
         .with_colors({rerun::Color(255, 255, 255)})
         .with_radii({0.0f}));
-}
 
-static std::vector<std::array<float, 3>> trajectory_points;
-
-void log_trajectory(float x, float y, float z)
-{
-    trajectory_points.push_back(coords::ned_to_zup(x, y, z));
+    trajectory_points.push_back(last_pos);
 }
 
 void flush_trajectory(rerun::RecordingStream& rec)
