@@ -33,6 +33,12 @@ void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
 
     rec.log("px4/body/frd", rerun::Arrows3D::from_vectors({{0.3f, 0, 0}, {0, -0.3f, 0}, {0, 0, -0.3f}})
         .with_colors({rerun::Color(255, 0, 0), rerun::Color(0, 255, 0), rerun::Color(0, 0, 255)}));
+
+    rec.log("px4/body/label", rerun::Points3D({{0, 0, 0}})
+        .with_labels({"Vehicle"})
+        .with_show_labels(true)
+        .with_colors({rerun::Color(255, 255, 255)})
+        .with_radii({0.0f}));
 }
 
 static std::vector<std::array<float, 3>> flight_path_points;
