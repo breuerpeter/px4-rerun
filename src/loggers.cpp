@@ -10,26 +10,26 @@ static void set_timestamp(rerun::RecordingStream& rec, int64_t timestamp_us)
     }
 }
 
-void log_vehicle_position(rerun::RecordingStream& rec, int64_t timestamp_us,
-                          float x, float y, float z)
+static std::array<float, 3> last_pos = {0, 0, 0};
+static std::array<float, 4> last_quat = {1, 0, 0, 0}; // identity
+
+void set_vehicle_position(float x, float y, float z)
 {
-    set_timestamp(rec, timestamp_us);
-
-    auto pos = coords::ned_to_zup(x, y, z);
-
-    rec.log("px4/body", rerun::Transform3D::from_translation({pos[0], pos[1], pos[2]}));
+    last_pos = coords::ned_to_zup(x, y, z);
 }
 
-void log_vehicle_attitude(rerun::RecordingStream& rec, int64_t timestamp_us,
-                          float qw, float qx, float qy, float qz)
+void set_vehicle_attitude(float qw, float qx, float qy, float qz)
+{
+    last_quat = coords::ned_quat_to_zup(qw, qx, qy, qz);
+}
+
+void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
 {
     set_timestamp(rec, timestamp_us);
 
-    auto q = coords::ned_quat_to_zup(qw, qx, qy, qz);
-
-    rec.log("px4/body", rerun::Transform3D::from_rotation(
-        rerun::datatypes::Quaternion::from_wxyz(q[0], q[1], q[2], q[3])
-    ));
+    rec.log("px4/body", rerun::Transform3D::from_translation_rotation(
+        {last_pos[0], last_pos[1], last_pos[2]},
+        rerun::datatypes::Quaternion::from_wxyz(last_quat[0], last_quat[1], last_quat[2], last_quat[3])));
 
     rec.log("px4/body/frd", rerun::Arrows3D::from_vectors({{0.3f, 0, 0}, {0, -0.3f, 0}, {0, 0, -0.3f}})
         .with_colors({rerun::Color(255, 0, 0), rerun::Color(0, 255, 0), rerun::Color(0, 0, 255)}));

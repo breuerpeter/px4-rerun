@@ -87,10 +87,11 @@ void log_pose(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataC
                 ++j;
             }
 
-            log_vehicle_position(rec, static_cast<int64_t>(ts), x, y, z);
-            log_vehicle_attitude(rec, static_cast<int64_t>(ts),
-                                att_samples[j].q[0], att_samples[j].q[1],
-                                att_samples[j].q[2], att_samples[j].q[3]);
+            set_vehicle_position(x, y, z);
+            set_vehicle_attitude(
+                att_samples[j].q[0], att_samples[j].q[1],
+                att_samples[j].q[2], att_samples[j].q[3]);
+            log_vehicle_pose(rec, static_cast<int64_t>(ts));
         } catch (...) {}
     }
 }
