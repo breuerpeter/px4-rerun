@@ -234,7 +234,7 @@ void log_all_scalars(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp
     }
 }
 
-constexpr double TERRAIN_PADDING_M = 500.0;
+constexpr double TERRAIN_PADDING_M = 50.0;
 constexpr double DEG_PER_METER_LAT = 1.0 / 111000.0;
 
 void fetch_and_log_terrain(
