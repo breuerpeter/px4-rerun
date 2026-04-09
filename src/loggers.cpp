@@ -61,7 +61,7 @@ void log_velocity(rerun::RecordingStream& rec, int64_t timestamp_us,
     float s = speed > 0 ? len / speed : 0;
     auto vel = coords::ned_to_zup(vx * s, vy * s, vz * s);
     char label[16];
-    std::snprintf(label, sizeof(label), "%.1f m/s", speed);
+    std::snprintf(label, sizeof(label), "%.1f m/s", static_cast<double>(speed));
 
     rec.log("px4/world/velocity", rerun::Arrows3D::from_vectors({{vel[0], vel[1], vel[2]}})
         .with_origins({{pos[0], pos[1], pos[2]}})
