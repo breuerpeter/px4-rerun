@@ -11,6 +11,14 @@ FetchContent_Declare(rerun_sdk
     URL https://github.com/rerun-io/rerun/releases/download/0.31.1/rerun_cpp_sdk.zip)
 FetchContent_MakeAvailable(rerun_sdk)
 
+# Suppress strict warnings for third-party Rerun SDK code
+target_compile_options(rerun_sdk PRIVATE
+    -Wno-double-promotion
+    -Wno-float-equal
+    -Wno-shadow
+    -Wno-error
+)
+
 # ULog support (optional)
 option(PX4_RERUN_ULOG "Enable ULog file parsing support" ON)
 
