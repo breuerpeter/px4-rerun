@@ -70,7 +70,7 @@ void log_pose(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataC
             a.q[2] = s["q"][2].as<float>();
             a.q[3] = s["q"][3].as<float>();
             att_samples.push_back(a);
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
     if (att_samples.empty()) return;
 
@@ -100,7 +100,7 @@ void log_pose(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataC
                 att_samples[j].q[2], att_samples[j].q[3]);
             log_vehicle_pose(rec, static_cast<int64_t>(ts));
             log_velocity(rec, static_cast<int64_t>(ts), x, y, z, vx, vy, vz);
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
 
     flush_trajectory(rec);
@@ -118,7 +118,7 @@ void log_home(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::DataC
             float y = s["y"].as<float>();
             float z = s["z"].as<float>();
             log_home_position(rec, ts, x, y, z);
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
 }
 
@@ -135,7 +135,7 @@ void log_setpoint(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::D
             float z = s["z"].as<float>();
             float yaw = s["yaw"].as<float>();
             log_setpoint_pose(rec, ts, x, y, z, yaw);
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
 }
 
@@ -159,7 +159,7 @@ void log_mission(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::Da
                     have_ref = true;
                     break;
                 }
-            } catch (...) {}
+            } catch (const std::exception&) {}
         }
     }
     if (!have_ref) return;
@@ -179,12 +179,12 @@ void log_mission(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp::Da
                                                cos(ref_lat * DEG_TO_RAD));
 
             bool alt_relative = false;
-            try { alt_relative = s["altitude_is_relative"].as<int>() != 0; } catch (...) {}
+            try { alt_relative = s["altitude_is_relative"].as<int>() != 0; } catch (const std::exception&) {}
 
             float local_z = alt_relative ? -alt : -(alt - ref_alt);
 
             log_mission_item(rec, ts, local_x, local_y, local_z, nav_cmd);
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
 }
 
@@ -215,7 +215,7 @@ void log_all_scalars(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp
                     try {
                         sample[field].as<double>();
                         numeric_fields.push_back(field);
-                    } catch (...) {}
+                    } catch (const std::exception&) {}
                 }
                 first = false;
                 if (numeric_fields.empty()) break;
@@ -227,9 +227,9 @@ void log_all_scalars(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp
                     try {
                         log_scalar(rec, "timeseries/" + name + "/" + field,
                                   ts, sample[field].as<double>());
-                    } catch (...) {}
+                    } catch (const std::exception&) {}
                 }
-            } catch (...) {}
+            } catch (const std::exception&) {}
         }
     }
 }
@@ -257,7 +257,7 @@ void fetch_and_log_terrain(
                 have_ref = true;
                 break;
             }
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
     if (!have_ref) return;
 
@@ -276,7 +276,7 @@ void fetch_and_log_terrain(
             if (lon < lon_min) lon_min = lon;
             if (lon > lon_max) lon_max = lon;
             ++count;
-        } catch (...) {}
+        } catch (const std::exception&) {}
     }
     if (count == 0) return;
 
