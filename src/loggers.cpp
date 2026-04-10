@@ -13,8 +13,10 @@ static void set_timestamp(rerun::RecordingStream& rec, int64_t timestamp_us)
     }
 }
 
+// Cached vehicle state — not thread-safe; assumes single-threaded use.
 static std::array<float, 3> last_pos = {0, 0, 0};
 static std::array<float, 4> last_quat = {1, 0, 0, 0}; // identity
+static std::vector<std::array<float, 3>> trajectory_points;
 
 void set_vehicle_position(float x, float y, float z)
 {
@@ -25,8 +27,6 @@ void set_vehicle_attitude(float qw, float qx, float qy, float qz)
 {
     last_quat = coords::ned_quat_to_zup(qw, qx, qy, qz);
 }
-
-static std::vector<std::array<float, 3>> trajectory_points;
 
 void log_vehicle_pose(rerun::RecordingStream& rec, int64_t timestamp_us)
 {
