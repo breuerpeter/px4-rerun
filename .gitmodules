@@ -1,3 +1,0 @@
-[submodule "terrain-fetcher"]
-	path = terrain-fetcher
-	url = git@github.com:breuerpeter/terrain-fetcher.git

@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - name: full
+            loader: ON
+            terrain: ON
+          - name: no-terrain
+            loader: ON
+            terrain: OFF
+          - name: core-only
+            loader: OFF
+            terrain: OFF
+    name: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        if: matrix.terrain == 'ON'
+        run: sudo apt-get update && sudo apt-get install -y libproj-dev libtiff-dev libssl-dev
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DPX4_RERUN_LOADER=${{ matrix.loader }}
+          -DPX4_RERUN_TERRAIN=${{ matrix.terrain }}
+
+      - name: Build
+        run: cmake --build build -j$(nproc)

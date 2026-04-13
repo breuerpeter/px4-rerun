@@ -1,16 +1,15 @@
 #include <px4_rerun/ulog.hpp>
 
-#ifdef PX4_RERUN_HAS_ULOG
-
 #include <px4_rerun/loggers.hpp>
 
-#include <array>
 #include <cmath>
-#include <cstdio>
-#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#ifdef PX4_RERUN_TERRAIN
+#include <px4_rerun/terrain_fetcher.hpp>
+#endif
 
 #include <ulog_cpp/data_container.hpp>
 #include <ulog_cpp/reader.hpp>
@@ -234,7 +233,7 @@ void log_all_scalars(rerun::RecordingStream& rec, const std::shared_ptr<ulog_cpp
     }
 }
 
-constexpr double TERRAIN_PADDING_M = 50.0;
+constexpr double TERRAIN_PADDING_M = 500.0;
 constexpr double DEG_PER_METER_LAT = 1.0 / 111000.0;
 
 void fetch_and_log_terrain(
@@ -286,46 +285,22 @@ void fetch_and_log_terrain(
     lon_min -= TERRAIN_PADDING_M * deg_per_meter_lon;
     lon_max += TERRAIN_PADDING_M * deg_per_meter_lon;
 
-    auto terrain_fetcher_dir = std::filesystem::path(__FILE__).parent_path().parent_path() / "terrain-fetcher";
-    auto glb_path = std::filesystem::temp_directory_path() / "px4_rerun_terrain.glb";
+#ifdef PX4_RERUN_TERRAIN
+    std::cerr << "Fetching terrain: ref=(" << ref_lat << ", " << ref_lon << ", " << ref_alt << ")\n";
+    auto terrain = terrain_fetcher::fetch_terrain(
+        ref_lat, ref_lon, static_cast<double>(ref_alt),
+        lat_min, lat_max, lon_min, lon_max);
 
-    std::array<char, 512> ref_lat_s, ref_lon_s, ref_alt_s;
-    std::array<char, 512> lat_min_s, lat_max_s, lon_min_s, lon_max_s;
-    std::snprintf(ref_lat_s.data(), ref_lat_s.size(), "%.10f", ref_lat);
-    std::snprintf(ref_lon_s.data(), ref_lon_s.size(), "%.10f", ref_lon);
-    std::snprintf(ref_alt_s.data(), ref_alt_s.size(), "%.4f", static_cast<double>(ref_alt));
-    std::snprintf(lat_min_s.data(), lat_min_s.size(), "%.10f", lat_min);
-    std::snprintf(lat_max_s.data(), lat_max_s.size(), "%.10f", lat_max);
-    std::snprintf(lon_min_s.data(), lon_min_s.size(), "%.10f", lon_min);
-    std::snprintf(lon_max_s.data(), lon_max_s.size(), "%.10f", lon_max);
-
-    std::string cmd = "uv run --directory " + terrain_fetcher_dir.string() +
-        " export-glb"
-        " --ref-lat " + ref_lat_s.data() +
-        " --ref-lon " + ref_lon_s.data() +
-        " --ref-alt " + ref_alt_s.data() +
-        " --lat-min " + lat_min_s.data() +
-        " --lat-max " + lat_max_s.data() +
-        " --lon-min " + lon_min_s.data() +
-        " --lon-max " + lon_max_s.data() +
-        " -o " + glb_path.string();
-
-    std::cerr << "Fetching terrain: " << cmd << "\n";
-    int ret = std::system((cmd + " >/dev/null").c_str());
-
-    if (ret != 0 || !std::filesystem::exists(glb_path)) {
-        std::cerr << "Terrain fetch failed (exit code " << ret << ")\n";
-        return;
-    }
-
-    auto asset = rerun::Asset3D::from_file_path(glb_path.string());
-    if (asset.is_ok()) {
-        rec.log_static("terrain", asset.value);
+    if (!terrain.glb.empty()) {
+        rec.log_static("terrain", rerun::Asset3D::from_file_contents(
+            terrain.glb, rerun::components::MediaType("model/gltf-binary")));
+        std::cerr << "Terrain logged\n";
     } else {
-        std::cerr << "Failed to load terrain GLB\n";
+        std::cerr << "Terrain fetch failed\n";
     }
-    std::filesystem::remove(glb_path);
-    std::cerr << "Terrain logged\n";
+#else
+    std::cerr << "Terrain fetching disabled (PX4_RERUN_TERRAIN=OFF)\n";
+#endif
 }
 
 } // anonymous namespace
@@ -355,5 +330,3 @@ void log_ulog(rerun::RecordingStream& rec, const std::string& filepath, const UL
 }
 
 } // namespace px4_rerun
-
-#endif // PX4_RERUN_HAS_ULOG

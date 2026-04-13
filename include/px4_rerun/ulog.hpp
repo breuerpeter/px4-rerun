@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef PX4_RERUN_HAS_ULOG
-
 #include <string>
 
 #include <rerun.hpp>
@@ -20,5 +18,3 @@ void log_ulog(rerun::RecordingStream& rec, const std::string& filepath,
               const ULogOptions& options = {});
 
 } // namespace px4_rerun
-
-#endif // PX4_RERUN_HAS_ULOG
