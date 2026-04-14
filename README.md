@@ -6,9 +6,47 @@
 
 C++ library for visualizing PX4 data with [Rerun](https://rerun.io)
 
-## Usage
+## Visualizing ULog files
 
-### 1. FetchContent (recommended)
+### Install prebuilt binary
+
+Download the tarball from the [latest release](https://github.com/breuerpeter/px4-rerun/releases/latest) and extract to `~/.local`:
+
+```bash
+curl -sSL https://github.com/breuerpeter/px4-rerun/releases/latest/download/px4-rerun-linux-x86_64.tar.gz | tar xz -C ~/.local
+```
+
+The Rerun Viewer will auto-discover the loader at `~/.local/bin/rerun-loader-ulog`, letting you open `.ulg` files directly:
+
+```bash
+rerun flight.ulg
+```
+
+Optionally pass a [blueprint](blueprints/) to customize the viewer layout:
+
+```bash
+rerun flight.ulg ~/.local/share/px4-rerun/blueprints/vehicle.rbl
+```
+
+### Build from source
+
+```bash
+sudo apt-get install libproj-dev libtiff-dev libssl-dev
+cmake -S . -B build && cmake --build build -j$(nproc)
+```
+
+Auto-installs the loader to `~/.local/bin/` and blueprints to `~/.local/share/px4-rerun/blueprints/`.
+
+Build options:
+
+| Option | Default | Description |
+|---|---|---|
+| `PX4_RERUN_LOADER` | `ON` | Build the loader and enable ULog parsing |
+| `PX4_RERUN_TERRAIN` | `ON` | USGS terrain fetching (requires `libproj-dev libtiff-dev libssl-dev`) |
+
+## Using as a library
+
+### FetchContent (recommended)
 
 ```cmake
 include(FetchContent)
@@ -19,7 +57,7 @@ FetchContent_MakeAvailable(px4_rerun)
 target_link_libraries(my_target PRIVATE px4_rerun)
 ```
 
-### 2. Git submodule
+### Git submodule
 
 ```bash
 git submodule add https://github.com/breuerpeter/px4-rerun.git
@@ -30,27 +68,7 @@ add_subdirectory(px4-rerun)
 target_link_libraries(my_target PRIVATE px4_rerun)
 ```
 
-### 3. Prebuilt loader binary
-
-Download the tarball from the [latest release](https://github.com/breuerpeter/px4-rerun/releases/latest) and extract to `~/.local`:
-
-```bash
-curl -sSL https://github.com/breuerpeter/px4-rerun/releases/latest/download/px4-rerun-linux-x86_64.tar.gz | tar xz -C ~/.local
-```
-
-This installs the loader to `~/.local/bin/` and blueprints to `~/.local/share/px4-rerun/blueprints/`. The Rerun Viewer will auto-discover the loader, letting you open `.ulg` files directly:
-
-```bash
-rerun flight.ulg
-```
-
-Optionally pass a blueprint to customize the viewer layout:
-
-```bash
-rerun flight.ulg ~/.local/share/px4-rerun/blueprints/vehicle.rbl
-```
-
-## Library API
+### API
 
 ```cpp
 #include <px4_rerun/px4_rerun.hpp>
@@ -63,10 +81,3 @@ px4_rerun::log_scalar(rec, "timeseries/topic/field", timestamp_us, value);
 // Or parse an entire ULog file at once
 px4_rerun::log_ulog(rec, "flight.ulg");
 ```
-
-## Build options
-
-| Option | Default | Description |
-|---|---|---|
-| `PX4_RERUN_LOADER` | `ON` | Build the `rerun-loader-ulog` executable and ULog parsing support |
-| `PX4_RERUN_TERRAIN` | `ON` | Enable USGS terrain fetching (requires `libproj-dev libtiff-dev libssl-dev`) |
