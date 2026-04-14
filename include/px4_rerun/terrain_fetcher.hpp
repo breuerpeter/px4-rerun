@@ -6,7 +6,7 @@
 namespace terrain_fetcher {
 
 struct TerrainData {
-    std::vector<uint8_t> glb; // GLB file contents (mesh vertices in local ENU meters)
+  std::vector<uint8_t> glb;  // GLB file contents (mesh vertices in local ENU meters)
 };
 
 /// Fetch USGS elevation + imagery and return a textured terrain mesh as GLB.
@@ -19,9 +19,7 @@ struct TerrainData {
 /// @param lon_min  Western boundary (WGS84 degrees)
 /// @param lon_max  Eastern boundary (WGS84 degrees)
 /// @return TerrainData with GLB bytes, or empty glb on failure
-TerrainData fetch_terrain(
-    double ref_lat, double ref_lon, double ref_alt,
-    double lat_min, double lat_max,
-    double lon_min, double lon_max);
+TerrainData fetch_terrain(double ref_lat, double ref_lon, double ref_alt, double lat_min,
+                          double lat_max, double lon_min, double lon_max);
 
-} // namespace terrain_fetcher
+}  // namespace terrain_fetcher
