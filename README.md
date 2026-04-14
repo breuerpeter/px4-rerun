@@ -70,7 +70,3 @@ px4_rerun::log_ulog(rec, "flight.ulg");
 |---|---|---|
 | `PX4_RERUN_LOADER` | `ON` | Build the `rerun-loader-ulog` executable and ULog parsing support |
 | `PX4_RERUN_TERRAIN` | `ON` | Enable USGS terrain fetching (requires `libproj-dev libtiff-dev libssl-dev`) |
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions, commit conventions, and the release flow.
