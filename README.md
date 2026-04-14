@@ -8,7 +8,7 @@ C++ library for visualizing PX4 data with [Rerun](https://rerun.io)
 
 ## Visualizing ULog files
 
-![Example](docs/preview_ulog.jpg)
+![Example](docs/preview_ulog.png)
 
 ### Install prebuilt binary
 
@@ -48,7 +48,7 @@ Build options:
 
 ## Using as a library
 
-![Example](docs/preview_lib.jpg)
+![Example](docs/preview_lib.png)
 
 ### FetchContent (recommended)
 
