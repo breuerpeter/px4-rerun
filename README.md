@@ -8,10 +8,10 @@ C++ library for visualizing PX4 data with [Rerun](https://rerun.io)
 
 ## Gallery
 
-ULog playback with the prebuilt loader:
+ULog playback with the prebuilt [loader](#visualizing-ulog-files)
 ![Example](docs/preview_ulog.png)
 
-Logging live data from a PX4 SITL instance using the library:
+Logging live data from a PX4 SITL instance using the [library](#using-as-a-library)
 ![Example](docs/preview_lib.png)
 
 ## Visualizing ULog files
