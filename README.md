@@ -2,7 +2,6 @@
 
 [![Build](https://github.com/breuerpeter/px4-rerun/actions/workflows/build.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun/actions/workflows/build.yml)
 [![Pre-commit](https://github.com/breuerpeter/px4-rerun/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun/actions/workflows/pre-commit.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 C++ library for visualizing PX4 data with [Rerun](https://rerun.io).
 
