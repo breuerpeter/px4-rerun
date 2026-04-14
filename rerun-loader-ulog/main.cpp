@@ -33,12 +33,13 @@ int main(int argc, char* argv[]) {
     return rerun::EXTERNAL_DATA_LOADER_INCOMPATIBLE_EXIT_CODE;
   }
 
-  std::string app_id = "rerun-loader-ulog";
-  if (args.count("application-id")) app_id = args["application-id"].as<std::string>();
+  // Force app_id to "px4-rerun" so our shipped blueprints (also tagged
+  // "px4-rerun") are applied. Otherwise the viewer picks a per-file app_id
+  // derived from the filepath, which won't match any blueprint.
   std::string rec_id;
   if (args.count("recording-id")) rec_id = args["recording-id"].as<std::string>();
 
-  auto rec = rerun::RecordingStream(app_id, rec_id);
+  auto rec = rerun::RecordingStream("px4-rerun", rec_id);
   rec.to_stdout().exit_on_failure();
 
   px4_rerun::log_ulog(rec, filepath);
