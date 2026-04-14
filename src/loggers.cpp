@@ -99,7 +99,7 @@ void flush_trajectory(rerun::RecordingStream& rec) {
 
   rec.log_static("px4/world/trajectory",
                  rerun::LineStrips3D(rerun::components::LineStrip3D(trajectory_points))
-                     .with_colors({rerun::Color(255, 255, 255, 128)}));
+                     .with_colors({rerun::Color(255, 255, 255, 200)}));
 
   trajectory_points.clear();
 }
