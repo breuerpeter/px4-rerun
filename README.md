@@ -1,7 +1,7 @@
 # px4-rerun
 
-[![Build](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/build.yml)
-[![Pre-commit](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/pre-commit.yml)
+[![Build](https://github.com/breuerpeter/px4-rerun/actions/workflows/build.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun/actions/workflows/build.yml)
+[![Pre-commit](https://github.com/breuerpeter/px4-rerun/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun/actions/workflows/pre-commit.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 C++ library for visualizing PX4 data with [Rerun](https://rerun.io).
@@ -13,7 +13,7 @@ C++ library for visualizing PX4 data with [Rerun](https://rerun.io).
 ```cmake
 include(FetchContent)
 FetchContent_Declare(px4_rerun
-    GIT_REPOSITORY https://github.com/breuerpeter/px4-rerun-sdk.git
+    GIT_REPOSITORY https://github.com/breuerpeter/px4-rerun.git
     GIT_TAG v0.1.0)
 FetchContent_MakeAvailable(px4_rerun)
 target_link_libraries(my_target PRIVATE px4_rerun)
@@ -22,17 +22,17 @@ target_link_libraries(my_target PRIVATE px4_rerun)
 ### 2. Git submodule
 
 ```bash
-git submodule add https://github.com/breuerpeter/px4-rerun-sdk.git
+git submodule add https://github.com/breuerpeter/px4-rerun.git
 ```
 
 ```cmake
-add_subdirectory(px4-rerun-sdk)
+add_subdirectory(px4-rerun)
 target_link_libraries(my_target PRIVATE px4_rerun)
 ```
 
 ### 3. Prebuilt loader binary
 
-Download `rerun-loader-ulog` from the [latest release](https://github.com/breuerpeter/px4-rerun-sdk/releases/latest) and place it in `~/.local/bin/`. The Rerun Viewer will auto-discover it, letting you open `.ulg` files directly:
+Download `rerun-loader-ulog` from the [latest release](https://github.com/breuerpeter/px4-rerun/releases/latest) and place it in `~/.local/bin/`. The Rerun Viewer will auto-discover it, letting you open `.ulg` files directly:
 
 ```bash
 rerun flight.ulg

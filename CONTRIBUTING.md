@@ -42,4 +42,4 @@ Releases are automated by release-please:
 
 ## Filing issues
 
-[Open an issue](https://github.com/breuerpeter/px4-rerun-sdk/issues) with a clear description and, if reporting a bug, steps to reproduce.
+[Open an issue](https://github.com/breuerpeter/px4-rerun/issues) with a clear description and, if reporting a bug, steps to reproduce.
