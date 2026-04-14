@@ -6,9 +6,15 @@
 
 C++ library for visualizing PX4 data with [Rerun](https://rerun.io)
 
-## Visualizing ULog files
+## Examples
+
+> [!TIP]
+> Top image: ULog playback with the prebuilt loader. Bottom: logging live data from a PX4 SITL instance using the library.
 
 ![Example](docs/preview_ulog.png)
+![Example](docs/preview_lib.png)
+
+## Visualizing ULog files
 
 ### Install prebuilt binary
 
@@ -47,8 +53,6 @@ Build options:
 | `PX4_RERUN_TERRAIN` | `ON` | Fetch and show USGS terrain data (US only) |
 
 ## Using as a library
-
-![Example](docs/preview_lib.png)
 
 ### FetchContent (recommended)
 
