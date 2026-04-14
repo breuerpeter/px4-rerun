@@ -38,6 +38,12 @@ Download `rerun-loader-ulog` from the [latest release](https://github.com/breuer
 rerun flight.ulg
 ```
 
+Optionally pass a [blueprint](blueprints/) to customize the viewer layout:
+
+```bash
+rerun flight.ulg blueprints/vehicle.rbl
+```
+
 ## Library API
 
 ```cpp
