@@ -14,6 +14,7 @@ This repo uses [pre-commit](https://pre-commit.com) for formatting and linting. 
 ```bash
 pip install pre-commit
 pre-commit install
+pre-commit install --hook-type commit-msg  # enforces conventional commit messages
 ```
 
 Hooks run automatically on `git commit`. To run manually:
