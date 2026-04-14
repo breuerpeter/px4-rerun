@@ -32,16 +32,22 @@ target_link_libraries(my_target PRIVATE px4_rerun)
 
 ### 3. Prebuilt loader binary
 
-Download `rerun-loader-ulog` from the [latest release](https://github.com/breuerpeter/px4-rerun/releases/latest) and place it in `~/.local/bin/`. The Rerun Viewer will auto-discover it, letting you open `.ulg` files directly:
+Download the tarball from the [latest release](https://github.com/breuerpeter/px4-rerun/releases/latest) and extract to `~/.local`:
+
+```bash
+curl -sSL https://github.com/breuerpeter/px4-rerun/releases/latest/download/px4-rerun-linux-x86_64.tar.gz | tar xz -C ~/.local
+```
+
+This installs the loader to `~/.local/bin/` and blueprints to `~/.local/share/px4-rerun/blueprints/`. The Rerun Viewer will auto-discover the loader, letting you open `.ulg` files directly:
 
 ```bash
 rerun flight.ulg
 ```
 
-Optionally pass a [blueprint](blueprints/) to customize the viewer layout:
+Optionally pass a blueprint to customize the viewer layout:
 
 ```bash
-rerun flight.ulg blueprints/vehicle.rbl
+rerun flight.ulg ~/.local/share/px4-rerun/blueprints/vehicle.rbl
 ```
 
 ## Library API

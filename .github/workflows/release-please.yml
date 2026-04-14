@@ -34,11 +34,19 @@ jobs:
       - name: Build
         run: cmake -S . -B build && cmake --build build -j$(nproc)
 
+      - name: Package release
+        run: |
+          mkdir -p stage/bin stage/share/px4-rerun/blueprints
+          cp build/rerun-loader-ulog/rerun-loader-ulog stage/bin/
+          cp blueprints/*.rbl stage/share/px4-rerun/blueprints/
+          cp LICENSE THIRD_PARTY_LICENSES.md stage/share/px4-rerun/
+          tar czf px4-rerun-linux-x86_64.tar.gz -C stage .
+
       - name: Upload to release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ needs.release-please.outputs.tag_name }} \
-            build/rerun-loader-ulog/rerun-loader-ulog \
+            px4-rerun-linux-x86_64.tar.gz \
             LICENSE \
             THIRD_PARTY_LICENSES.md
