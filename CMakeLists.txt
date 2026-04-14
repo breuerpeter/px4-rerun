@@ -95,6 +95,12 @@ if(PX4_RERUN_TERRAIN)
         target_link_libraries(px4_rerun PRIVATE PkgConfig::PROJ)
     endif()
     target_compile_definitions(px4_rerun PRIVATE PX4_RERUN_TERRAIN)
+
+    # Suppress strict warnings from third-party headers pulled in by
+    # terrain_fetcher.cpp (stb_image, stb_image_write, tinygltf, httplib).
+    set_source_files_properties(src/terrain_fetcher.cpp PROPERTIES
+        COMPILE_OPTIONS "-Wno-error;-Wno-double-promotion;-Wno-shadow;-Wno-float-equal"
+    )
 endif()
 
 if(PX4_RERUN_LOADER)
