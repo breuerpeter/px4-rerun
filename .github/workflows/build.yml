@@ -22,7 +22,7 @@ jobs:
             terrain: OFF
     name: ${{ matrix.name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         if: matrix.terrain == 'ON'
