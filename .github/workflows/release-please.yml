@@ -47,6 +47,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ needs.release-please.outputs.tag_name }} \
-            px4-rerun-linux-x86_64.tar.gz \
-            LICENSE \
-            THIRD_PARTY_LICENSES.md
+            px4-rerun-linux-x86_64.tar.gz
