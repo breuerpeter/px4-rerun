@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/breuerpeter/px4-rerun/actions/workflows/build.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun/actions/workflows/build.yml)
 [![Pre-commit](https://github.com/breuerpeter/px4-rerun/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun/actions/workflows/pre-commit.yml)
+[![Rerun SDK](https://img.shields.io/badge/rerun--sdk-0.31.1-blueviolet)](https://github.com/rerun-io/rerun)
 
 C++ library for visualizing PX4 data with [Rerun](https://rerun.io).
 
