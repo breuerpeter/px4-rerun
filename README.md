@@ -1,17 +1,44 @@
 # px4-rerun
 
-C++ library for visualizing PX4 data with [Rerun](https://rerun.io). Maps PX4 topics to Rerun archetypes with NED-to-z-up coordinate transforms.
+[![Build](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/build.yml)
+[![Pre-commit](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/breuerpeter/px4-rerun-sdk/actions/workflows/pre-commit.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Optionally parses ULog files directly (via `PX4_RERUN_ULOG`, default ON).
+C++ library for visualizing PX4 data with [Rerun](https://rerun.io).
 
 ## Usage
 
-Add as a subdirectory or submodule:
+### 1. FetchContent (recommended)
 
 ```cmake
-add_subdirectory(px4-rerun)
+include(FetchContent)
+FetchContent_Declare(px4_rerun
+    GIT_REPOSITORY https://github.com/breuerpeter/px4-rerun-sdk.git
+    GIT_TAG v0.1.0)
+FetchContent_MakeAvailable(px4_rerun)
 target_link_libraries(my_target PRIVATE px4_rerun)
 ```
+
+### 2. Git submodule
+
+```bash
+git submodule add https://github.com/breuerpeter/px4-rerun-sdk.git
+```
+
+```cmake
+add_subdirectory(px4-rerun-sdk)
+target_link_libraries(my_target PRIVATE px4_rerun)
+```
+
+### 3. Prebuilt loader binary
+
+Download `rerun-loader-ulog` from the [latest release](https://github.com/breuerpeter/px4-rerun-sdk/releases/latest) and place it in `~/.local/bin/`. The Rerun Viewer will auto-discover it, letting you open `.ulg` files directly:
+
+```bash
+rerun flight.ulg
+```
+
+## Library API
 
 ```cpp
 #include <px4_rerun/px4_rerun.hpp>
@@ -25,13 +52,13 @@ px4_rerun::log_scalar(rec, "timeseries/topic/field", timestamp_us, value);
 px4_rerun::log_ulog(rec, "flight.ulg");
 ```
 
-## rerun-loader-ulog
+## Build options
 
-An external data loader for the Rerun Viewer that opens `.ulg` files directly.
+| Option | Default | Description |
+|---|---|---|
+| `PX4_RERUN_LOADER` | `ON` | Build the `rerun-loader-ulog` executable and ULog parsing support |
+| `PX4_RERUN_TERRAIN` | `ON` | Enable USGS terrain fetching (requires `libproj-dev libtiff-dev libssl-dev`) |
 
-```bash
-cmake -B build -DPX4_RERUN_LOADER=ON && cmake --build build -j$(nproc)
-rerun flight.ulg
-```
+## Contributing
 
-The executable is auto-installed to `~/.local/bin/` where the Rerun Viewer discovers it.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions, commit conventions, and the release flow.
