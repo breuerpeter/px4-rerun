@@ -14,6 +14,9 @@ ULog playback with the prebuilt [loader](#visualizing-ulog-files)
 Logging live data from a PX4 SITL instance using the [library](#using-as-a-library)
 ![Example](docs/preview_lib.png)
 
+ULog analysis web app using the Rerun web viewer for 3D visualization
+![Example](docs/preview_ulog_app.png)
+
 ## Visualizing ULog files
 
 ### Install prebuilt binary
