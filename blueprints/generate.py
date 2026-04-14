@@ -41,7 +41,7 @@ def vehicle_view():
 blueprints = {
     "trajectory": rrb.Blueprint(trajectory_view(), *COLLAPSED_PANELS),
     "vehicle": rrb.Blueprint(vehicle_view(), *COLLAPSED_PANELS),
-    "both": rrb.Blueprint(
+    "vehicle_left_trajectory_right": rrb.Blueprint(
         rrb.Horizontal(vehicle_view(), trajectory_view()),
         *COLLAPSED_PANELS,
     ),
