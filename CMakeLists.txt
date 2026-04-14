@@ -99,4 +99,15 @@ endif()
 
 if(PX4_RERUN_LOADER)
     add_subdirectory(rerun-loader-ulog)
+
+    # Auto-install blueprints to ~/.local/share/px4-rerun/blueprints so users
+    # can reference them as `rerun flight.ulg ~/.local/share/px4-rerun/blueprints/<name>.rbl`
+    file(GLOB BLUEPRINT_FILES "${CMAKE_CURRENT_SOURCE_DIR}/blueprints/*.rbl")
+    if(BLUEPRINT_FILES)
+        add_custom_target(auto_install_blueprints ALL
+            COMMAND ${CMAKE_COMMAND} -E make_directory $ENV{HOME}/.local/share/px4-rerun/blueprints
+            COMMAND ${CMAKE_COMMAND} -E copy ${BLUEPRINT_FILES} $ENV{HOME}/.local/share/px4-rerun/blueprints
+            COMMENT "Auto-installing blueprints to ~/.local/share/px4-rerun/blueprints"
+        )
+    endif()
 endif()
