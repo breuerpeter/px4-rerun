@@ -220,7 +220,7 @@ std::vector<float> convert_to_local_enu(const ElevationData& elev, double ref_la
   int n = rows * cols;
 
   // Generate lon/lat grid
-  std::vector<double> lons(n), lats(n), heights(n);
+  std::vector<double> lons(n), lats(n);
   for (int r = 0; r < rows; ++r) {
     double lat = elev.lat_max - (elev.lat_max - elev.lat_min) * r / (rows - 1);
     for (int c = 0; c < cols; ++c) {
@@ -228,40 +228,18 @@ std::vector<float> convert_to_local_enu(const ElevationData& elev, double ref_la
       int idx = r * cols + c;
       lats[idx] = lat;
       lons[idx] = lon;
-      heights[idx] = static_cast<double>(elev.elevations[idx]);
     }
   }
 
   PJ_CONTEXT* ctx = proj_context_create();
-  proj_context_set_enable_network(ctx, true);
 
-  // NAD83+NAVD88 → WGS84 (geoid → ellipsoid height)
-  PJ* geoid = proj_create_crs_to_crs(ctx, "EPSG:5498", "EPSG:4979", nullptr);
-  if (!geoid) {
-    std::cerr << "PROJ: failed to create EPSG:5498→EPSG:4979 transformer\n";
-    proj_context_destroy(ctx);
-    return {};
-  }
+  // Vertical: USGS 3DEP returns NAVD88 (geoid). PX4's vehicle_local_position.ref_alt
+  // is AMSL per spec (also geoid-referenced, typically EGM96/EGM2008 from the GPS).
+  // NAVD88 and EGM96/EGM2008 differ by <1m in CONUS, so we treat them as directly
+  // comparable and skip the NAVD88→WGS84 ellipsoid conversion (which would introduce
+  // a ~20m offset since the geoid sits below the ellipsoid).
 
-  // EPSG:5498 and EPSG:4979 are geographic CRSs with native (lat, lon, h) order.
-  // Python pyproj uses always_xy=False, so we match that: input as (lat, lon, h).
-  // Do NOT use proj_normalize_for_visualization here.
-  std::vector<double> wgs_lons(n), wgs_lats(n), wgs_heights(n);
-  for (int i = 0; i < n; ++i) {
-    PJ_COORD in = proj_coord(lats[i], lons[i], heights[i], 0);
-    PJ_COORD out = proj_trans(geoid, PJ_FWD, in);
-    wgs_lats[i] = out.xyz.x;
-    wgs_lons[i] = out.xyz.y;
-    wgs_heights[i] = out.xyz.z;
-  }
-
-  int dbg = n / 2;
-  std::cerr << "PROJ geoid: elev=" << heights[dbg] << " → wgs84=" << wgs_heights[dbg]
-            << " (offset=" << wgs_heights[dbg] - heights[dbg] << ")\n";
-
-  proj_destroy(geoid);
-
-  // WGS84 → local ENU (azimuthal equidistant)
+  // Horizontal: WGS84 → local ENU (azimuthal equidistant)
   std::string aeqd_def = "+proj=aeqd +lat_0=" + std::to_string(ref_lat) +
                          " +lon_0=" + std::to_string(ref_lon) + " +datum=WGS84";
   PJ* aeqd = proj_create_crs_to_crs(ctx, "EPSG:4326", aeqd_def.c_str(), nullptr);
@@ -281,11 +259,11 @@ std::vector<float> convert_to_local_enu(const ElevationData& elev, double ref_la
 
   std::vector<float> vertices(n * 3);
   for (int i = 0; i < n; ++i) {
-    PJ_COORD in = proj_coord(wgs_lons[i], wgs_lats[i], 0, 0);
+    PJ_COORD in = proj_coord(lons[i], lats[i], 0, 0);
     PJ_COORD out = proj_trans(aeqd_norm, PJ_FWD, in);
-    vertices[i * 3 + 0] = static_cast<float>(out.xy.x);                  // east
-    vertices[i * 3 + 1] = static_cast<float>(out.xy.y);                  // north
-    vertices[i * 3 + 2] = static_cast<float>(wgs_heights[i] - ref_alt);  // up
+    vertices[i * 3 + 0] = static_cast<float>(out.xy.x);                      // east
+    vertices[i * 3 + 1] = static_cast<float>(out.xy.y);                      // north
+    vertices[i * 3 + 2] = static_cast<float>(elev.elevations[i] - ref_alt);  // up
   }
 
   proj_destroy(aeqd_norm);
