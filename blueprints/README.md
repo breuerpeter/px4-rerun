@@ -7,6 +7,7 @@ Rerun blueprint files that customize the viewer layout for PX4 data.
 | `trajectory.rbl` | Single 3D view, excludes setpoint/velocity overlays |
 | `vehicle.rbl` | Single 3D view, orbital camera tracking the vehicle body |
 | `both.rbl` | Side-by-side vehicle + trajectory views |
+| `messages.rbl` | Side-by-side PX4 text log + trajectory views |
 
 ## Usage
 

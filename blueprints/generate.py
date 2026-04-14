@@ -14,50 +14,39 @@ COLLAPSED_PANELS = (
     rrb.TimePanel(state="collapsed"),
 )
 
+
+def trajectory_view():
+    return rrb.Spatial3DView(
+        origin="/",
+        contents=[
+            "+ $origin/**",
+            "- /px4/world/setpoint/**",
+            "- /px4/world/setpoint_yaw/**",
+            "- /px4/world/setpoint_yaw_label/**",
+            "- /px4/world/velocity/**",
+        ],
+    )
+
+
+def vehicle_view():
+    return rrb.Spatial3DView(
+        origin="/",
+        eye_controls=rrb.archetypes.EyeControls3D(
+            kind="Orbital",
+            tracking_entity="px4/body/frd",
+        ),
+    )
+
+
 blueprints = {
-    "trajectory": rrb.Blueprint(
-        rrb.Spatial3DView(
-            origin="/",
-            contents=[
-                "+ $origin/**",
-                "- /px4/world/setpoint/**",
-                "- /px4/world/setpoint_yaw/**",
-                "- /px4/world/setpoint_yaw_label/**",
-                "- /px4/world/velocity/**",
-            ],
-        ),
-        *COLLAPSED_PANELS,
-    ),
-    "vehicle": rrb.Blueprint(
-        rrb.Spatial3DView(
-            origin="/",
-            eye_controls=rrb.archetypes.EyeControls3D(
-                kind="Orbital",
-                tracking_entity="px4/body/frd",
-            ),
-        ),
-        *COLLAPSED_PANELS,
-    ),
+    "trajectory": rrb.Blueprint(trajectory_view(), *COLLAPSED_PANELS),
+    "vehicle": rrb.Blueprint(vehicle_view(), *COLLAPSED_PANELS),
     "both": rrb.Blueprint(
-        rrb.Horizontal(
-            rrb.Spatial3DView(
-                origin="/",
-                eye_controls=rrb.archetypes.EyeControls3D(
-                    kind="Orbital",
-                    tracking_entity="px4/body/frd",
-                ),
-            ),
-            rrb.Spatial3DView(
-                origin="/",
-                contents=[
-                    "+ $origin/**",
-                    "- /px4/world/setpoint/**",
-                    "- /px4/world/setpoint_yaw/**",
-                    "- /px4/world/setpoint_yaw_label/**",
-                    "- /px4/world/velocity/**",
-                ],
-            ),
-        ),
+        rrb.Horizontal(vehicle_view(), trajectory_view()),
+        *COLLAPSED_PANELS,
+    ),
+    "messages": rrb.Blueprint(
+        rrb.Horizontal(rrb.TextLogView(origin="/logs"), trajectory_view()),
         *COLLAPSED_PANELS,
     ),
 }
