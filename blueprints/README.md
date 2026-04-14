@@ -9,15 +9,9 @@ Rerun blueprint files that customize the viewer layout for PX4 data.
 | `vehicle_left_trajectory_right.rbl` | Side-by-side vehicle + trajectory views |
 | `messages.rbl` | Side-by-side PX4 text log + trajectory views |
 
-## Usage
-
-```bash
-rerun flight.ulg blueprints/vehicle.rbl
-```
-
 ## Regenerating
 
-Requires [uv](https://docs.astral.sh/uv/):
+Note: requires [uv](https://docs.astral.sh/uv/)
 
 ```bash
 uv run --with "rerun-sdk==0.31.1" python blueprints/generate.py
