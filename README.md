@@ -31,7 +31,7 @@ rerun flight.ulg ~/.local/share/px4-rerun/blueprints/vehicle.rbl
 ### Build from source
 
 ```bash
-sudo apt-get install libproj-dev libtiff-dev libssl-dev
+sudo apt-get install libproj-dev libtiff-dev libssl-dev # required by PX4_RERUN_TERRAIN build option
 cmake -S . -B build && cmake --build build -j$(nproc)
 ```
 
@@ -42,7 +42,7 @@ Build options:
 | Option | Default | Description |
 |---|---|---|
 | `PX4_RERUN_LOADER` | `ON` | Build the loader and enable ULog parsing |
-| `PX4_RERUN_TERRAIN` | `ON` | USGS terrain fetching (requires `libproj-dev libtiff-dev libssl-dev`) |
+| `PX4_RERUN_TERRAIN` | `ON` | Fetch and show USGS terrain data (US only) |
 
 ## Using as a library
 
