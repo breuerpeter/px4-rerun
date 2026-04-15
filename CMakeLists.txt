@@ -29,7 +29,8 @@ set(PX4_RERUN_SOURCES
 
 if(PX4_RERUN_LOADER)
     FetchContent_Declare(ulog_cpp
-        URL https://github.com/PX4/ulog_cpp/archive/refs/tags/v1.0.1.tar.gz
+        GIT_REPOSITORY https://github.com/PX4/ulog_cpp.git
+        GIT_TAG v1.0.1
     )
     FetchContent_MakeAvailable(ulog_cpp)
     list(APPEND PX4_RERUN_SOURCES src/ulog.cpp)
