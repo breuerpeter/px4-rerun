@@ -7,7 +7,11 @@ namespace px4_rerun {
 
 static void set_timestamp(rerun::RecordingStream& rec, int64_t timestamp_us) {
   if (timestamp_us >= 0) {
-    rec.set_time_duration_nanos("timestamp", timestamp_us * 1000);
+    // The ONE timeline: duration-typed "time", carrying PX4's hrt clock. Under HIL lockstep hrt IS
+    // the simulator's clock, so a simulator driving the same timeline scrubs everything on a single
+    // axis — whether merged live over gRPC or offline via `rerun rrd merge`. Duration-typed so
+    // viewers render "12.3s", not an epoch date.
+    rec.set_time_duration_nanos("time", timestamp_us * 1000);
   }
 }
 
