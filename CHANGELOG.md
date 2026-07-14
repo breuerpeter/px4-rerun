@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/breuerpeter/px4-rerun/compare/v0.1.0...v1.0.0) (2026-07-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* the "timestamp" timeline is gone; consumers and saved blueprints pinned to it (blueprints/*.rbl may need regenerating) must switch to "time".
+
+### Features
+
+* one duration-typed "time" timeline; rerun SDK 0.34.1 ([bdbd3af](https://github.com/breuerpeter/px4-rerun/commit/bdbd3afada30673e759b24f03fbf10a302746724))
+
 ## 0.1.0 (2026-04-14)
 
 
